@@ -407,42 +407,58 @@ button {
   }
 }
 
-@media (max-width: 767px) {
+@media (min-width: 480px) and (max-width: 767px) {
   h1 {
-    font-size: 30px;
+    font-size: 36px;
   }
   h2 {
-    font-size: 16px;
+    font-size: 18px;
   }
   body {
-    font-size: 12px;
+    font-size: 13px;
   }
 
   .main-txt {
-    font-size: 60px;
+    font-size: 72px;
+  }
+
+  .header-inner {
+    padding: 14px 16px;
   }
 
   .header-inner .navbar-brand {
-    font-size: 22px;
+    font-size: 24px;
   }
   .header-inner nav ul {
     gap: 16px;
     display: none;
   }
-  .header-inner .ham-btn img {
-    width: 24px;
+  .header-inner .ham-btn {
+    display: flex;
+    align-items: center;
   }
+  .header-inner .ham-btn i {
+    font-size: 20px;
+  }
+
   .rotated-text {
-    font-size: 12px;
+    font-size: 11px;
+    right: 12px;
   }
 
   .banner-inner {
-    min-height: calc(100dvh - 60px);
-    padding-top: 40px;
+    min-height: calc(100dvh - 56px);
+    padding: 36px 16px 20px;
+  }
+
+  .banner-inner .bottom-desc {
+    flex-wrap: wrap;
+    gap: 16px;
   }
 
   .banner-inner .bottom-desc .left-desc h1 {
-    margin-bottom: 14px;
+    margin-bottom: 12px;
+    font-size: 32px;
   }
 
   .banner-inner .bottom-desc .middle-desc {
@@ -450,18 +466,129 @@ button {
   }
 
   .banner-inner .bottom-desc .right-desc h1 {
-    padding-right: 22px;
+    padding-right: 20px;
+    font-size: 32px;
   }
   .banner-inner .bottom-desc .right-desc h1::after {
-    width: 10%;
+    width: 14%;
+    height: 4px;
   }
   .banner-inner .bottom-desc .right-desc .desc-inner {
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .banner-inner .bottom-desc .right-desc .desc-inner span {
+    font-size: 11px;
+  }
+  .banner-inner .bottom-desc .right-desc .desc-inner ul {
+    gap: 6px;
+  }
+  .banner-inner .bottom-desc .right-desc .desc-inner ul li i {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 479px) {
+  h1 {
+    font-size: 28px;
+  }
+  h2 {
+    font-size: 14px;
+  }
+  body {
+    font-size: 11px;
+  }
+
+  .main-txt {
+    font-size: 48px;
+  }
+
+  .header-inner {
+    padding: 12px 12px;
+  }
+
+  .header-inner .navbar-brand {
+    font-size: 18px;
+  }
+  .header-inner nav ul {
+    gap: 16px;
+    display: none;
+  }
+  .header-inner .ham-btn {
+    display: flex;
+    align-items: center;
+  }
+  .header-inner .ham-btn i {
+    font-size: 18px;
+  }
+
+  .rotated-text {
+    font-size: 9px;
+    right: 8px;
+    top: 45%;
+  }
+
+  .banner-inner {
+    min-height: calc(100dvh - 48px);
+    padding: 32px 12px 16px;
+    gap: 8px;
+  }
+
+  .banner-inner .top-desc h5 {
+    font-size: 13px;
+  }
+
+  .banner-inner .top-desc h6 {
+    font-size: 11px;
+  }
+
+  .banner-inner .bottom-desc {
+    flex-direction: column;
     gap: 12px;
+  }
+
+  .banner-inner .bottom-desc .left-desc h1 {
+    margin-bottom: 8px;
+    font-size: 24px;
+  }
+
+  .banner-inner .bottom-desc .left-desc .desc-inner h5 {
+    font-size: 13px;
+  }
+
+  .banner-inner .bottom-desc .left-desc .desc-inner h6 {
+    font-size: 11px;
+  }
+
+  .banner-inner .bottom-desc .middle-desc {
+    display: none;
+  }
+
+  .banner-inner .bottom-desc .right-desc {
+    width: 100%;
+  }
+
+  .banner-inner .bottom-desc .right-desc h1 {
+    padding-right: 16px;
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
+  .banner-inner .bottom-desc .right-desc h1::after {
+    width: 12%;
+    height: 3px;
+  }
+  .banner-inner .bottom-desc .right-desc .desc-inner {
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .banner-inner .bottom-desc .right-desc .desc-inner span {
+    font-size: 10px;
+    width: 100%;
   }
   .banner-inner .bottom-desc .right-desc .desc-inner ul {
     gap: 4px;
   }
-  .banner-inner .bottom-desc .right-desc .desc-inner ul li img {
-    width: 14px;
+  .banner-inner .bottom-desc .right-desc .desc-inner ul li i {
+    font-size: 12px;
   }
 }

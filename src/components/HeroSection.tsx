@@ -18,9 +18,34 @@ export default function HeroSection() {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const dat = require('dat.gui');
     const scene = new THREE.Scene();
-      const camera = new THREE.PerspectiveCamera(25, window.innerWidth / window.innerHeight, 0.1, 1000);
+    
+    // Responsive camera settings
+    const getResponsiveCamera = () => {
+      const width = window.innerWidth;
+      let fov = 25;
+      let zPos = 24;
+      
+      if (width < 480) {
+        // Mobile: small phones
+        fov = 45;
+        zPos = 35;
+      } else if (width < 768) {
+        // Mobile: larger phones
+        fov = 35;
+        zPos = 30;
+      } else if (width < 1024) {
+        // Tablet
+        fov = 28;
+        zPos = 26;
+      }
+      
+      return { fov, zPos };
+    };
+    
+    const { fov, zPos } = getResponsiveCamera();
+    const camera = new THREE.PerspectiveCamera(fov, window.innerWidth / window.innerHeight, 0.1, 1000);
 
-      camera.position.z = 24;
+    camera.position.z = zPos;
 
       const renderer = new THREE.WebGLRenderer({
         canvas: document.querySelector('#webgl') as HTMLCanvasElement,
@@ -49,6 +74,15 @@ export default function HeroSection() {
 
       const gui = new dat.GUI({ closed: true });
       gui.close(); // Double ensure it's closed by default
+<<<<<<< HEAD
+=======
+      
+      // Hide GUI on mobile devices
+      if (window.innerWidth < 768) {
+        gui.domElement.style.display = 'none';
+      }
+      
+>>>>>>> hero-responsive
       const params = {
         color: '#1701ea',
         emissive: '#070505',
@@ -269,9 +303,28 @@ export default function HeroSection() {
       animate();
 
       const handleResize = () => {
-        camera.aspect = window.innerWidth / window.innerHeight;
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        
+        // Update camera aspect ratio
+        camera.aspect = width / height;
+        
+        // Adjust camera FOV and position based on new window size
+        const { fov, zPos } = getResponsiveCamera();
+        camera.fov = fov;
+        camera.position.z = zPos;
         camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
+        
+        // Update renderer size
+        renderer.setSize(width, height);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        
+        // Toggle GUI visibility on mobile
+        if (width < 768) {
+          gui.domElement.style.display = 'none';
+        } else {
+          gui.domElement.style.display = 'block';
+        }
       };
 
       window.addEventListener('resize', handleResize);
