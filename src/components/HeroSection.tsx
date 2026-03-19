@@ -76,8 +76,25 @@ export default function HeroSection() {
 const gui = new dat.GUI({ closed: true });
 gui.close(); // Double ensure it's closed by default
 
+      // Helper function to convert hex to RGB
+      const hexToRgb = (hex: string): string => {
+        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        return result ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : '202, 112, 0';
+      };
+
+      // Helper function to update CSS variables for About Section bubble
+      const updateBubbleStyles = () => {
+        const root = document.documentElement;
+        root.style.setProperty('--bubble-primary-color', params.color);
+        root.style.setProperty('--bubble-emissive-color', params.emissive);
+        root.style.setProperty('--bubble-shadow-rgb', hexToRgb(params.color));
+        root.style.setProperty('--bubble-roughness', String(params.roughness));
+        root.style.setProperty('--bubble-metalness', String(params.metalness));
+        root.style.setProperty('--bubble-clearcoat', String(params.clearcoat));
+      };
+
 const params = {
-  color: '#1701ea',
+  color: '#ca7000',
         emissive: '#070505',
         roughness: 0.35,
         metalness: 0.148,
@@ -95,12 +112,30 @@ const params = {
         clearcoatRoughness: 0.2,
       });
 
+      // Initialize CSS variables with default values
+      updateBubbleStyles();
+
       const guiMaterial = gui.addFolder('Material');
-      guiMaterial.addColor(params, 'color').onChange((v: string) => material.color.set(v));
-      guiMaterial.addColor(params, 'emissive').onChange((v: string) => material.emissive.set(v));
-      guiMaterial.add(params, 'roughness', 0, 1).onChange((v: number) => { material.roughness = v; });
-      guiMaterial.add(params, 'metalness', 0, 1).onChange((v: number) => { material.metalness = v; });
-      guiMaterial.add(params, 'clearcoat', 0, 1).onChange((v: number) => { material.clearcoat = v; });
+      guiMaterial.addColor(params, 'color').onChange((v: string) => {
+        material.color.set(v);
+        updateBubbleStyles();
+      });
+      guiMaterial.addColor(params, 'emissive').onChange((v: string) => {
+        material.emissive.set(v);
+        updateBubbleStyles();
+      });
+      guiMaterial.add(params, 'roughness', 0, 1).onChange((v: number) => {
+        material.roughness = v;
+        updateBubbleStyles();
+      });
+      guiMaterial.add(params, 'metalness', 0, 1).onChange((v: number) => {
+        material.metalness = v;
+        updateBubbleStyles();
+      });
+      guiMaterial.add(params, 'clearcoat', 0, 1).onChange((v: number) => {
+        material.clearcoat = v;
+        updateBubbleStyles();
+      });
       // guiMaterial.open();
 
       const group = new THREE.Group();

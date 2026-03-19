@@ -1,0 +1,424 @@
+/* ═══════════════════════════════════════════════════════
+   ABOUT SECTION — exact same palette as hero
+   white bg · Helvetica Neue · #1701ea blue · glossy balls
+   ═══════════════════════════════════════════════════════ */
+
+/* Default CSS variables (synchronized from hero section) */
+:root {
+  --bubble-primary-color: #ca7000;
+  --bubble-emissive-color: #8a4500;
+  --bubble-roughness: 0.35;
+  --bubble-metalness: 0.148;
+  --bubble-clearcoat: 0.31;
+  --bubble-shadow-rgb: 202, 112, 0;
+}
+
+.about-section {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  background: #f0f0f5;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  padding: 0 60px;
+}
+
+/* ─── LAYOUT ─────────────────────────────────── */
+.about-inner {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  max-width: 1550px;
+  width: 100%;
+  margin: 0 auto;
+  min-height: 100vh;
+}
+
+/* ─── LEFT: BUBBLE LANDING ZONE ─────────────── */
+.about-image-col {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  height: 100vh;
+}
+
+.bubble-anchor {
+  position: relative;
+  width: 340px;
+  height: 340px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* perspective for magnetic tilt */
+  perspective: 800px;
+}
+
+/* ──────────────────────────────────────────────
+   THE TRAVELLING BUBBLE
+   • position: fixed  so it moves freely over the page
+   • starts tiny (like a hero sphere) at hero canvas
+   • GSAP scrubs: scale grows, position moves
+   • width/height set in JS so CSS just provides style
+   • color synced to hero section via CSS variables
+────────────────────────────────────────────── */
+.bubble-traveller {
+  position: fixed;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0;
+  will-change: transform, opacity, width, height, left, top;
+  transform-origin: center center;
+
+  /* Glossy blue material synced from hero section */
+  background:
+    radial-gradient(ellipse 55% 38% at 32% 28%,
+      rgba(255,255,255,0.62) 0%, transparent 52%),
+    radial-gradient(ellipse 90% 90% at 50% 50%,
+      var(--bubble-primary-color) 0%, var(--bubble-primary-color) 40%, var(--bubble-emissive-color) 100%);
+  box-shadow:
+    0 8px 30px  rgba(var(--bubble-shadow-rgb), 0.45),
+    0 20px 60px rgba(var(--bubble-shadow-rgb), 0.25),
+    inset 0 -2px 20px rgba(0, 0, 20, 0.28),
+    inset 0  2px 12px rgba(255,255,255,0.18);
+}
+
+/* Specular highlight — always present on traveller */
+.bubble-traveller::after {
+  content: '';
+  position: absolute;
+  top: 8%;
+  left: 12%;
+  width: 42%;
+  height: 30%;
+  background: radial-gradient(ellipse,
+    rgba(255,255,255,0.78) 0%,
+    rgba(255,255,255,0)    70%);
+  border-radius: 50%;
+  transform: rotate(-30deg);
+  pointer-events: none;
+}
+
+/* ── THE LANDED / RESTING BUBBLE ── */
+.bubble-landed {
+  position: relative;
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  overflow: hidden;
+  opacity: 0;
+  transform: scale(0.88);
+  will-change: transform, opacity;
+
+  background:
+    radial-gradient(ellipse 55% 38% at 32% 28%,
+      rgba(255,255,255,0.62) 0%, transparent 52%),
+    radial-gradient(ellipse 90% 90% at 50% 50%,
+      var(--bubble-primary-color) 0%, var(--bubble-primary-color) 40%, var(--bubble-emissive-color) 100%);
+  box-shadow:
+    0 20px 60px  rgba(var(--bubble-shadow-rgb), 0.38),
+    0 60px 120px rgba(var(--bubble-shadow-rgb), 0.18),
+    inset 0 -2px 40px rgba(0,0,20,0.3),
+    inset 0  2px 20px rgba(255,255,255,0.14);
+
+  cursor: pointer;
+  transition: box-shadow 0.4s ease;
+}
+
+.bubble-landed.is-floating {
+  animation: bubbleLevitate 5s ease-in-out infinite;
+}
+
+.bubble-landed:hover {
+  box-shadow:
+    0 28px 80px  rgba(var(--bubble-shadow-rgb), 0.5),
+    0 80px 160px rgba(var(--bubble-shadow-rgb), 0.26),
+    inset 0 -2px 40px rgba(0,0,20,0.35),
+    inset 0  2px 24px rgba(255,255,255,0.18);
+}
+
+/* Specular on landed bubble - REMOVED for clean image display */
+
+/* Profile image inside the bubble */
+.bubble-landed img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  opacity: 0;
+  z-index: 1;
+  filter: brightness(0.95) contrast(1.08);
+  transition: opacity 0.3s ease;
+}
+
+.bubble-landed.show-image img {
+  opacity: 1;
+}
+
+@keyframes bubbleLevitate {
+  0%,  100% { transform: translateY(0px)   rotate(0deg); }
+  33%        { transform: translateY(-16px) rotate(1.2deg); }
+  66%        { transform: translateY(-8px)  rotate(-0.5deg); }
+}
+
+/* Halo rings - color synced from hero bubble */
+.bubble-halo {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1.5px solid var(--bubble-primary-color);
+  opacity: 0;
+  pointer-events: none;
+  animation: haloBreath 4s ease-in-out infinite;
+  transition: border-color 0.3s ease;
+}
+.bubble-halo:nth-child(2) {
+  inset: -26px;
+  animation-delay: -1.4s;
+}
+.bubble-halo:nth-child(3) {
+  inset: -54px;
+  animation-delay: -2.8s;
+}
+.bubble-halo.is-visible { opacity: 1; }
+
+@keyframes haloBreath {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50%       { opacity: 1;   transform: scale(1.03); }
+}
+
+/* ─── RIGHT: TEXT ────────────────────────────── */
+.about-text-col {
+  padding: 80px 40px 80px 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  opacity: 0;
+  transform: translateX(50px);
+}
+
+/* Descriptor tag — hero style */
+.about-tag h5 {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.03em;
+  color: #111;
+  margin: 0 0 3px;
+}
+
+.about-tag h6 {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 11px;
+  font-weight: 300;
+  color: #888;
+  margin: 0;
+}
+
+.about-tag-line {
+  width: 28px;
+  height: 2px;
+  background: #111;
+  margin-top: 12px;
+}
+
+/* Big name — hero "DYNAMIC COLLISIONS" weight */
+.about-name {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: clamp(3rem, 5.2vw, 5.6rem);
+  font-weight: 900;
+  line-height: 0.92;
+  letter-spacing: -0.03em;
+  color: #0d0d0d;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.about-name-accent {
+  display: block;
+  color: var(--bubble-primary-color);
+  font-weight: 300;
+  font-size: 0.52em;
+  letter-spacing: 0.08em;
+  margin-top: 6px;
+  transition: color 0.3s ease;
+}
+
+/* Role */
+.about-role {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #555;
+}
+
+.about-role::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--bubble-primary-color);
+  box-shadow: 0 0 8px rgba(202,112,0,0.55);
+  flex-shrink: 0;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Description */
+.about-description {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 14.5px;
+  font-weight: 300;
+  line-height: 1.9;
+  color: #555;
+  max-width: 460px;
+  margin: 0;
+}
+
+/* Skills label */
+.about-skills-label {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: #bbb;
+  margin: 0;
+}
+
+.about-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.skill-pill {
+  padding: 7px 15px;
+  border: 1px solid var(--bubble-primary-color);
+  border-radius: 2px;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--bubble-primary-color);
+  opacity: 0;
+  transform: translateY(10px);
+  transition: background 0.22s ease, color 0.22s ease, border-color 0.22s ease;
+  cursor: default;
+  white-space: nowrap;
+  background: transparent;
+}
+
+.skill-pill:hover {
+  background: var(--bubble-primary-color);
+  color: #fff;
+  border-color: var(--bubble-primary-color);
+}
+
+/* Stats */
+.about-stats {
+  display: flex;
+  gap: 36px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(0,0,0,0.08);
+}
+
+.about-stat-number {
+  display: block;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: #0d0d0d;
+  line-height: 1;
+}
+
+.about-stat-label {
+  display: block;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #aaa;
+  margin-top: 4px;
+}
+
+/* Side text — "DRAG CURSOR TO PERFECT" style */
+.about-side-text {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%) rotate(90deg);
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 9px;
+  font-weight: 400;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: #bbb;
+  white-space: nowrap;
+  z-index: 3;
+  user-select: none;
+}
+
+/* Index number */
+.about-index {
+  position: absolute;
+  bottom: 24px;
+  right: 56px;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: clamp(3.5rem, 8vw, 9rem);
+  font-weight: 900;
+  color: rgba(0,0,0,0.055);
+  letter-spacing: -0.04em;
+  line-height: 1;
+  user-select: none;
+  z-index: 1;
+}
+
+/* ─── RESPONSIVE ─────────────────────────────── */
+@media (max-width: 900px) {
+  .about-section { padding: 60px 24px; }
+
+  .about-inner {
+    grid-template-columns: 1fr;
+    min-height: auto;
+    padding: 80px 0;
+    gap: 48px;
+  }
+
+  .about-image-col  { height: 360px; }
+  .bubble-anchor    { width: 260px; height: 260px; }
+  .bubble-landed    { width: 260px; height: 260px; }
+
+  .about-text-col {
+    padding: 0 24px;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .about-side-text { display: none; }
+  .about-index     { right: 20px; }
+}
+
+@media (max-width: 480px) {
+  .bubble-anchor, .bubble-landed { width: 200px; height: 200px; }
+  .about-skills { gap: 6px; }
+  .skill-pill   { font-size: 10px; padding: 6px 11px; }
+  .about-stats  { gap: 20px; }
+
+  .about-inner {
+    padding: 40px 0;
+  }
+  .about-section { padding: 40px 24px; }
+}
