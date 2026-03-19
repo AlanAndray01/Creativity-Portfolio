@@ -66,6 +66,13 @@ export default function HeroSection() {
       const controls = new OrbitControls(camera, renderer.domElement);
       controls.enableDamping = true;
       controls.dampingFactor = 0.05;
+      controls.autoRotate = false;
+      controls.autoRotateSpeed = 0;
+      controls.enableZoom = false;
+      controls.enablePan = false;
+      controls.enableRotate = false;
+      controls.target.set(0, 0, 0);
+      controls.update();
 
       const radii = [1, 0.6, 0.8, 0.4, 0.9, 0.7, 0.9, 0.3, 0.2, 0.5, 0.6, 0.4, 0.5, 0.6, 0.7, 0.3, 0.4, 0.8, 0.7, 0.5, 0.4, 0.6, 0.35, 0.38, 0.9, 0.3, 0.6, 0.4, 0.2, 0.35, 0.5, 0.15, 0.2, 0.25, 0.4, 0.8, 0.76, 0.8, 1, 0.8, 0.7, 0.8, 0.3, 0.5, 0.6, 0.55, 0.42, 0.75, 0.66, 0.6, 0.7, 0.5, 0.6, 0.35, 0.35, 0.35, 0.8, 0.6, 0.7, 0.8, 0.4, 0.89, 0.3, 0.3, 0.6, 0.4, 0.2, 0.52, 0.5, 0.15, 0.2, 0.25, 0.4, 0.8, 0.76, 0.8, 1, 0.8, 0.7, 0.8, 0.3, 0.5, 0.6, 0.8, 0.7, 0.75, 0.66, 0.6, 0.7, 0.5, 0.6, 0.35, 0.35, 0.35, 0.8, 0.6, 0.7, 0.8, 0.4, 0.89, 0.3];
 
@@ -214,7 +221,7 @@ const params = {
 
       const initY = -25;
       const revolutionRadius = 4;
-      const revolutionDuration = 2;
+      const revolutionDuration = 1.7;  // Reduced from 2 to 0.7 seconds
       const breathingAmplitude = 0.1;
       const breathingSpeed = 0.002;
 
@@ -369,68 +376,69 @@ const params = {
 
   return (
     <>
-      <div className="mouse-effect">
-        <div className="circle"></div>
-        <div className="circle-follow"></div>
+      <div className="hero-section-container">
+        <div className="mouse-effect">
+          <div className="circle"></div>
+          <div className="circle-follow"></div>
+        </div>
+
+        <header className="hide-text">
+          <div className="header-inner">
+            <a href="#" className="navbar-brand">Creativity</a>
+            <nav>
+              <ul>
+                <li><a href="#">octane</a></li>
+                <li><a href="#">cinema 4d</a></li>
+                <li><a href="#">dynamics</a></li>
+                <li><a href="#">Collisions</a></li>
+                <li><a href="#">simulations</a></li>
+              </ul>
+            </nav>
+            <button className="ham-btn">
+              <i className="fa-solid fa-bars"></i>
+            </button>
+          </div>
+        </header>
+
+        <h1 className="main-txt">Creativity</h1>
+
+        <section className="banner hide-text">
+          <div className="banner-inner">
+            <div className="top-desc">
+              <h5>Despersion Collisions</h5>
+              <h6>Research & Development</h6>
+              <span></span>
+            </div>
+            <div className="bottom-desc">
+              <div className="left-desc">
+                <h1>X</h1>
+                <div className="desc-inner">
+                  <h5>Pink & Rose Gold</h5>
+                  <h6>Lighting & Material Study</h6>
+                </div>
+              </div>
+              <div className="middle-desc">
+                <h2>Dynamic Collisions</h2>
+              </div>
+              <div className="right-desc">
+                <h1>01</h1>
+                <div className="desc-inner">
+                  <span>Social Links</span>
+                  <ul>
+                    <li><a href="#"><i className="fa-brands fa-x-twitter"></i></a></li>
+                    <li><a href="#"><i className="fa-brands fa-facebook-f"></i></a></li>
+                    <li><a href="#"><i className="fa-brands fa-instagram"></i></a></li>
+                    <li><a href="#"><i className="fa-brands fa-youtube"></i></a></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <span className="rotated-text hide-text">Drag cursor to perfect</span>
+        <canvas className="webgl" id="webgl"></canvas>
       </div>
-
-      <header className="hide-text">
-        <div className="header-inner">
-          <a href="#" className="navbar-brand">Creativity</a>
-          <nav>
-            <ul>
-              <li><a href="#">octane</a></li>
-              <li><a href="#">cinema 4d</a></li>
-              <li><a href="#">dynamics</a></li>
-              <li><a href="#">Collisions</a></li>
-              <li><a href="#">simulations</a></li>
-            </ul>
-          </nav>
-          <button className="ham-btn">
-            <i className="fa-solid fa-bars"></i>
-          </button>
-        </div>
-      </header>
-
-      <h1 className="main-txt">Creativity</h1>
-
-      <section className="banner hide-text">
-        <div className="banner-inner">
-          <div className="top-desc">
-            <h5>Despersion Collisions</h5>
-            <h6>Research & Development</h6>
-            <span></span>
-          </div>
-          <div className="bottom-desc">
-            <div className="left-desc">
-              <h1>X</h1>
-              <div className="desc-inner">
-                <h5>Pink & Rose Gold</h5>
-                <h6>Lighting & Material Study</h6>
-              </div>
-            </div>
-            <div className="middle-desc">
-              <h2>Dynamic Collisions</h2>
-            </div>
-            <div className="right-desc">
-              <h1>01</h1>
-              <div className="desc-inner">
-                <span>Social Links</span>
-                <ul>
-                  <li><a href="#"><i className="fa-brands fa-x-twitter"></i></a></li>
-                  <li><a href="#"><i className="fa-brands fa-facebook-f"></i></a></li>
-                  <li><a href="#"><i className="fa-brands fa-instagram"></i></a></li>
-                  <li><a href="#"><i className="fa-brands fa-youtube"></i></a></li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <span className="rotated-text hide-text">Drag cursor to perfect</span>
-
-      <canvas className="webgl" id="webgl"></canvas>
     </>
   );
 }
