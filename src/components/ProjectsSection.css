@@ -14,6 +14,13 @@
   align-items: center;
 }
 
+/* Mobile: Reduce section height by 10% */
+@media (max-width: 768px) {
+  .projects-section {
+    min-height: 90vh;
+  }
+}
+
 /* ─── TRAVELLING BALLS (position:fixed) ────────────── */
 .proj-traveller,
 .proj-split-ball {
@@ -153,8 +160,8 @@
 @media (max-width: 480px) {
   .projects-cards {
     gap: 20px;
-    padding: 0 20px 20px 20px;
-    margin: 0 -20px;
+    padding: 0 calc(50vw - 120px) 20px calc(50vw - 120px);
+    margin: 0;
   }
 }
 
@@ -190,6 +197,10 @@
 @media (max-width: 480px) {
   .project-card {
     min-width: 240px;
+    /* Add box shadow by default on mobile */
+    box-shadow: 
+      0 10px 20px rgba(var(--bubble-shadow-rgb), 0.4),
+      0 10px 20px rgba(var(--bubble-shadow-rgb), 0.25);
   }
 }
 
@@ -450,5 +461,17 @@
 
   .project-description {
     font-size: 12px;
+  }
+
+  .projects-index {
+    font-size: 24px;
+    bottom: 12px;
+    right: 16px;
+  }
+
+  .projects-index::before {
+    width: 20px;
+    height: 3px;
+    margin-right: 10px;
   }
 }

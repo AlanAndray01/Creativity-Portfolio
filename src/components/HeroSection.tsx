@@ -5,6 +5,8 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import gsap from 'gsap';
+import { getDeviceConfig } from '@/utils/deviceConfig';
+import { getQualityPreset } from '@/utils/qualityPresets';
 import './HeroSection.css';
 
 export default function HeroSection() {
@@ -13,6 +15,23 @@ export default function HeroSection() {
   useEffect(() => {
     if (initialized.current) return;
     initialized.current = true;
+
+    // Get detected device tier and preset
+    let deviceTier = 'MEDIUM'; // default fallback
+    let preset = null;
+
+    try {
+      const config = getDeviceConfig();
+      deviceTier = config.tier;
+      preset = getQualityPreset(config.tier);
+      
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`[HeroSection] Initializing with ${deviceTier} quality preset`);
+      }
+    } catch (error) {
+      console.warn('[HeroSection] Device config not available, using defaults:', error);
+      preset = getQualityPreset('MEDIUM');
+    }
 
     // Scene setup
     // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -47,70 +66,104 @@ export default function HeroSection() {
 
     camera.position.z = zPos;
 
-      const renderer = new THREE.WebGLRenderer({
-        canvas: document.querySelector('#webgl') as HTMLCanvasElement,
-        antialias: true,
-        alpha: true
-      });
-      renderer.setSize(window.innerWidth, window.innerHeight);
-      renderer.setPixelRatio(window.devicePixelRatio);
-      renderer.shadowMap.enabled = true;
-      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    // Apply quality settings from preset
+    const pixelRatio = preset?.pixelRatio ?? window.devicePixelRatio;
+    const antialias = preset?.antialias ?? true;
+    const shadowsEnabled = preset?.shadowsEnabled ?? true;
+    const shadowMapType = preset?.shadowMapType ?? 'PCFSoftShadowMap';
+    const sphereSegments = preset?.sphereSegments ?? 64;
+    const ambientLightIntensity = preset?.ambientLightIntensity ?? 0.64;
+    const directionalLightIntensity = preset?.directionalLightIntensity ?? 1.1;
+    const roomEnvQuality = preset?.roomEnvironmentQuality ?? 0.04;
 
-      // Add RoomEnvironment for ultra-realistic soft lighting
-      const pmremGenerator = new THREE.PMREMGenerator(renderer);
-      pmremGenerator.compileEquirectangularShader();
-      scene.environment = pmremGenerator.fromScene(new RoomEnvironment(), 0.04).texture;
+    const renderer = new THREE.WebGLRenderer({
+      canvas: document.querySelector('#webgl') as HTMLCanvasElement,
+      antialias: antialias,
+      alpha: true
+    });
+    
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(pixelRatio);
+    renderer.shadowMap.enabled = shadowsEnabled;
+    renderer.shadowMap.type = THREE[`${shadowMapType}` as keyof typeof THREE] as THREE.ShadowMapType;
+
+    // Add RoomEnvironment for ultra-realistic soft lighting
+    const pmremGenerator = new THREE.PMREMGenerator(renderer);
+    pmremGenerator.compileEquirectangularShader();
+    scene.environment = pmremGenerator.fromScene(new RoomEnvironment(), roomEnvQuality).texture;
 
       
-      const controls = new OrbitControls(camera, renderer.domElement);
-      controls.enableDamping = true;
-      controls.dampingFactor = 0.05;
-      controls.autoRotate = false;
-      controls.autoRotateSpeed = 0;
-      controls.enableZoom = false;
-      controls.enablePan = false;
-      controls.enableRotate = false;
-      controls.target.set(0, 0, 0);
-      controls.update();
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+    controls.autoRotate = false;
+    controls.autoRotateSpeed = 0;
+    controls.enableZoom = false;
+    controls.enablePan = false;
+    controls.enableRotate = false;
+    controls.target.set(0, 0, 0);
+    controls.update();
 
-      const radii = [1, 0.6, 0.8, 0.4, 0.9, 0.7, 0.9, 0.3, 0.2, 0.5, 0.6, 0.4, 0.5, 0.6, 0.7, 0.3, 0.4, 0.8, 0.7, 0.5, 0.4, 0.6, 0.35, 0.38, 0.9, 0.3, 0.6, 0.4, 0.2, 0.35, 0.5, 0.15, 0.2, 0.25, 0.4, 0.8, 0.76, 0.8, 1, 0.8, 0.7, 0.8, 0.3, 0.5, 0.6, 0.55, 0.42, 0.75, 0.66, 0.6, 0.7, 0.5, 0.6, 0.35, 0.35, 0.35, 0.8, 0.6, 0.7, 0.8, 0.4, 0.89, 0.3, 0.3, 0.6, 0.4, 0.2, 0.52, 0.5, 0.15, 0.2, 0.25, 0.4, 0.8, 0.76, 0.8, 1, 0.8, 0.7, 0.8, 0.3, 0.5, 0.6, 0.8, 0.7, 0.75, 0.66, 0.6, 0.7, 0.5, 0.6, 0.35, 0.35, 0.35, 0.8, 0.6, 0.7, 0.8, 0.4, 0.89, 0.3];
+    const radii = [1, 0.6, 0.8, 0.4, 0.9, 0.7, 0.9, 0.3, 0.2, 0.5, 0.6, 0.4, 0.5, 0.6, 0.7, 0.3, 0.4, 0.8, 0.7, 0.5, 0.4, 0.6, 0.35, 0.38, 0.9, 0.3, 0.6, 0.4, 0.2, 0.35, 0.5, 0.15, 0.2, 0.25, 0.4, 0.8, 0.76, 0.8, 1, 0.8, 0.7, 0.8, 0.3, 0.5, 0.6, 0.55, 0.42, 0.75, 0.66, 0.6, 0.7, 0.5, 0.6, 0.35, 0.35, 0.35, 0.8, 0.6, 0.7, 0.8, 0.4, 0.89, 0.3, 0.3, 0.6, 0.4, 0.2, 0.52, 0.5, 0.15, 0.2, 0.25, 0.4, 0.8, 0.76, 0.8, 1, 0.8, 0.7, 0.8, 0.3, 0.5, 0.6, 0.8, 0.7, 0.75, 0.66, 0.6, 0.7, 0.5, 0.6, 0.35, 0.35, 0.35, 0.8, 0.6, 0.7, 0.8, 0.4, 0.89, 0.3];
 
-      const positions = [
-        {x:0,y:0,z:0}, {x:1.2,y:0.9,z:-0.5}, {x:1.8,y:-0.3,z:0}, {x:-1,y:-1,z:0}, {x:-1,y:1.62,z:0}, {x:-1.65,y:0,z:-0.4}, {x:-2.13,y:-1.54,z:-0.4}, {x:0.8,y:0.94,z:0.3}, {x:0.5,y:-1,z:1.2}, {x:-0.16,y:-1.2,z:0.9}, {x:1.5,y:1.2,z:0.8}, {x:0.5,y:-1.58,z:1.4}, {x:-1.5,y:1,z:1.15}, {x:-1.5,y:-1.5,z:0.99}, {x:-1.5,y:-1.5,z:-1.9}, {x:1.85,y:0.8,z:0.05}, {x:1.5,y:-1.2,z:-0.75}, {x:0.9,y:-1.62,z:0.22}, {x:0.45,y:2,z:0.65}, {x:2.5,y:1.22,z:-0.2}, {x:2.35,y:0.7,z:0.55}, {x:-1.8,y:-0.35,z:0.85}, {x:-1.02,y:0.2,z:0.9}, {x:0.2,y:1,z:1}, {x:-2.88,y:0.7,z:1}, {x:-2,y:-0.95,z:1.5}, {x:-2.3,y:2.4,z:-0.1}, {x:-2.5,y:1.9,z:1.2}, {x:-1.8,y:0.37,z:1.2}, {x:-2.4,y:1.42,z:0.05}, {x:-2.72,y:-0.9,z:1.1}, {x:-1.8,y:-1.34,z:1.67}, {x:-1.6,y:1.66,z:0.91}, {x:-2.8,y:1.58,z:1.69}, {x:-2.97,y:2.3,z:0.65}, {x:1.1,y:-0.2,z:-1.45}, {x:-4,y:1.78,z:0.38}, {x:0.12,y:1.4,z:-1.29}, {x:-1.64,y:1.4,z:-1.79}, {x:-3.5,y:-0.58,z:0.1}, {x:-0.1,y:-1,z:-2}, {x:-4.5,y:0.55,z:-0.5}, {x:-3.87,y:0,z:1}, {x:-4.6,y:-0.1,z:0.65}, {x:-3,y:1.5,z:-0.7}, {x:-0.5,y:0.2,z:-1.5}, {x:-1.3,y:-0.45,z:-1.5}, {x:-3.35,y:0.25,z:-1.5}, {x:-4.76,y:-1.26,z:0.4}, {x:-4.32,y:0.85,z:1.4}, {x:-3.5,y:-1.82,z:0.9}, {x:-3.6,y:-0.6,z:1.46}, {x:-4.55,y:-1.5,z:1.63}, {x:-3.8,y:-1.15,z:2.1}, {x:-2.9,y:-0.25,z:1.86}, {x:-2.2,y:-0.4,z:1.86}, {x:-5.1,y:-0.24,z:1.86}, {x:-5.27,y:1.24,z:0.76}, {x:-5.27,y:2,z:-0.4}, {x:-6.4,y:0.4,z:1}, {x:-5.15,y:0.95,z:2}, {x:-6.2,y:0.5,z:-0.8}, {x:-4,y:0.08,z:1.8}, {x:2,y:-0.95,z:1.5}, {x:2.3,y:2.4,z:-0.1}, {x:2.5,y:1.9,z:1.2}, {x:1.8,y:0.37,z:1.2}, {x:3.24,y:0.6,z:1.05}, {x:2.72,y:-0.9,z:1.1}, {x:1.8,y:-1.34,z:1.67}, {x:1.6,y:1.99,z:0.91}, {x:2.8,y:1.58,z:1.69}, {x:2.97,y:2.3,z:0.65}, {x:-1.3,y:-0.2,z:-2.5}, {x:4,y:1.78,z:0.38}, {x:1.72,y:1.4,z:-1.29}, {x:2.5,y:-1.2,z:-2}, {x:3.5,y:-0.58,z:0.1}, {x:0.1,y:0.4,z:-2.42}, {x:4.5,y:0.55,z:-0.5}, {x:3.87,y:0,z:1}, {x:4.6,y:-0.1,z:0.65}, {x:3,y:1.5,z:-0.7}, {x:2.3,y:0.6,z:-2.6}, {x:4,y:1.5,z:-1.6}, {x:3.35,y:0.25,z:-1.5}, {x:4.76,y:-1.26,z:0.4}, {x:4.32,y:0.85,z:1.4}, {x:3.5,y:-1.82,z:0.9}, {x:3.6,y:-0.6,z:1.46}, {x:4.55,y:-1.5,z:1.63}, {x:3.8,y:-1.15,z:2.1}, {x:2.9,y:-0.25,z:1.86}, {x:2.2,y:-0.4,z:1.86}, {x:5.1,y:-0.24,z:1.86}, {x:5.27,y:1.24,z:0.76}, {x:5.27,y:2,z:-0.4}, {x:6.4,y:0.4,z:1}, {x:5.15,y:0.95,z:2}, {x:6.2,y:0.5,z:-0.8}, {x:4,y:0.08,z:1.8}
-      ];
+    const positions = [
+      {x:0,y:0,z:0}, {x:1.2,y:0.9,z:-0.5}, {x:1.8,y:-0.3,z:0}, {x:-1,y:-1,z:0}, {x:-1,y:1.62,z:0}, {x:-1.65,y:0,z:-0.4}, {x:-2.13,y:-1.54,z:-0.4}, {x:0.8,y:0.94,z:0.3}, {x:0.5,y:-1,z:1.2}, {x:-0.16,y:-1.2,z:0.9}, {x:1.5,y:1.2,z:0.8}, {x:0.5,y:-1.58,z:1.4}, {x:-1.5,y:1,z:1.15}, {x:-1.5,y:-1.5,z:0.99}, {x:-1.5,y:-1.5,z:-1.9}, {x:1.85,y:0.8,z:0.05}, {x:1.5,y:-1.2,z:-0.75}, {x:0.9,y:-1.62,z:0.22}, {x:0.45,y:2,z:0.65}, {x:2.5,y:1.22,z:-0.2}, {x:2.35,y:0.7,z:0.55}, {x:-1.8,y:-0.35,z:0.85}, {x:-1.02,y:0.2,z:0.9}, {x:0.2,y:1,z:1}, {x:-2.88,y:0.7,z:1}, {x:-2,y:-0.95,z:1.5}, {x:-2.3,y:2.4,z:-0.1}, {x:-2.5,y:1.9,z:1.2}, {x:-1.8,y:0.37,z:1.2}, {x:-2.4,y:1.42,z:0.05}, {x:-2.72,y:-0.9,z:1.1}, {x:-1.8,y:-1.34,z:1.67}, {x:-1.6,y:1.66,z:0.91}, {x:-2.8,y:1.58,z:1.69}, {x:-2.97,y:2.3,z:0.65}, {x:1.1,y:-0.2,z:-1.45}, {x:-4,y:1.78,z:0.38}, {x:0.12,y:1.4,z:-1.29}, {x:-1.64,y:1.4,z:-1.79}, {x:-3.5,y:-0.58,z:0.1}, {x:-0.1,y:-1,z:-2}, {x:-4.5,y:0.55,z:-0.5}, {x:-3.87,y:0,z:1}, {x:-4.6,y:-0.1,z:0.65}, {x:-3,y:1.5,z:-0.7}, {x:-0.5,y:0.2,z:-1.5}, {x:-1.3,y:-0.45,z:-1.5}, {x:-3.35,y:0.25,z:-1.5}, {x:-4.76,y:-1.26,z:0.4}, {x:-4.32,y:0.85,z:1.4}, {x:-3.5,y:-1.82,z:0.9}, {x:-3.6,y:-0.6,z:1.46}, {x:-4.55,y:-1.5,z:1.63}, {x:-3.8,y:-1.15,z:2.1}, {x:-2.9,y:-0.25,z:1.86}, {x:-2.2,y:-0.4,z:1.86}, {x:-5.1,y:-0.24,z:1.86}, {x:-5.27,y:1.24,z:0.76}, {x:-5.27,y:2,z:-0.4}, {x:-6.4,y:0.4,z:1}, {x:-5.15,y:0.95,z:2}, {x:-6.2,y:0.5,z:-0.8}, {x:-4,y:0.08,z:1.8}, {x:2,y:-0.95,z:1.5}, {x:2.3,y:2.4,z:-0.1}, {x:2.5,y:1.9,z:1.2}, {x:1.8,y:0.37,z:1.2}, {x:3.24,y:0.6,z:1.05}, {x:2.72,y:-0.9,z:1.1}, {x:1.8,y:-1.34,z:1.67}, {x:1.6,y:1.99,z:0.91}, {x:2.8,y:1.58,z:1.69}, {x:2.97,y:2.3,z:0.65}, {x:-1.3,y:-0.2,z:-2.5}, {x:4,y:1.78,z:0.38}, {x:1.72,y:1.4,z:-1.29}, {x:2.5,y:-1.2,z:-2}, {x:3.5,y:-0.58,z:0.1}, {x:0.1,y:0.4,z:-2.42}, {x:4.5,y:0.55,z:-0.5}, {x:3.87,y:0,z:1}, {x:4.6,y:-0.1,z:0.65}, {x:3,y:1.5,z:-0.7}, {x:2.3,y:0.6,z:-2.6}, {x:4,y:1.5,z:-1.6}, {x:3.35,y:0.25,z:-1.5}, {x:4.76,y:-1.26,z:0.4}, {x:4.32,y:0.85,z:1.4}, {x:3.5,y:-1.82,z:0.9}, {x:3.6,y:-0.6,z:1.46}, {x:4.55,y:-1.5,z:1.63}, {x:3.8,y:-1.15,z:2.1}, {x:2.9,y:-0.25,z:1.86}, {x:2.2,y:-0.4,z:1.86}, {x:5.1,y:-0.24,z:1.86}, {x:5.27,y:1.24,z:0.76}, {x:5.27,y:2,z:-0.4}, {x:6.4,y:0.4,z:1}, {x:5.15,y:0.95,z:2}, {x:6.2,y:0.5,z:-0.8}, {x:4,y:0.08,z:1.8}
+    ];
 
 const gui = new dat.GUI({ closed: true });
 gui.close(); // Double ensure it's closed by default
 
-      // Helper function to convert hex to RGB
-      const hexToRgb = (hex: string): string => {
-        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-        return result ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : '202, 112, 0';
-      };
+    // Helper function to convert hex to RGB
+    const hexToRgb = (hex: string): string => {
+      const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+      return result ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : '202, 112, 0';
+    };
 
-      // Helper function to update CSS variables for About Section bubble
-      const updateBubbleStyles = () => {
-        const root = document.documentElement;
-        root.style.setProperty('--bubble-primary-color', params.color);
-        root.style.setProperty('--bubble-emissive-color', params.emissive);
-        root.style.setProperty('--bubble-shadow-rgb', hexToRgb(params.color));
-        root.style.setProperty('--bubble-roughness', String(params.roughness));
-        root.style.setProperty('--bubble-metalness', String(params.metalness));
-        root.style.setProperty('--bubble-clearcoat', String(params.clearcoat));
-      };
+    // Helper function to update CSS variables for About Section bubble
+    const updateBubbleStyles = () => {
+      const root = document.documentElement;
+      root.style.setProperty('--bubble-primary-color', params.color);
+      root.style.setProperty('--bubble-emissive-color', params.emissive);
+      root.style.setProperty('--bubble-shadow-rgb', hexToRgb(params.color));
+      root.style.setProperty('--bubble-roughness', String(params.roughness));
+      root.style.setProperty('--bubble-metalness', String(params.metalness));
+      root.style.setProperty('--bubble-clearcoat', String(params.clearcoat));
+    };
 
 const params = {
   color: '#91c8e4',
-        emissive: '#000000',
-        roughness: 1,
-        metalness: 1,
-        clearcoat: 0.3,
-        ambientLight: 0.64,
-        directionalLight: 1.1
-      };
+      emissive: '#000000',
+      roughness: 1,
+      metalness: 1,
+      clearcoat: 0.3,
+      ambientLight: ambientLightIntensity,
+      directionalLight: directionalLightIntensity
+    };
 
-      const material = new THREE.MeshPhysicalMaterial({
+    const qualityGuiParams = {
+      openQualitySettings: () => {
+        window.dispatchEvent(new CustomEvent('open-quality-settings'));
+      }
+    };
+    gui.add(qualityGuiParams, 'openQualitySettings').name('Change Quality...');
+
+    // Select material based on quality tier
+    let material: THREE.Material;
+    
+    if (preset?.materialType === 'MeshBasicMaterial') {
+      material = new THREE.MeshBasicMaterial({
+        color: params.color,
+      });
+    } else if (preset?.materialType === 'MeshStandardMaterial') {
+      material = new THREE.MeshStandardMaterial({
+        color: params.color,
+        emissive: params.emissive,
+        roughness: params.roughness,
+        metalness: params.metalness,
+      });
+    } else {
+      // HIGH tier: MeshPhysicalMaterial
+      material = new THREE.MeshPhysicalMaterial({
         color: params.color,
         emissive: params.emissive,
         roughness: params.roughness,
@@ -118,48 +171,69 @@ const params = {
         clearcoat: params.clearcoat,
         clearcoatRoughness: 0.2,
       });
+    }
 
-      // Initialize CSS variables with default values
+    // Initialize CSS variables with default values
+    updateBubbleStyles();
+
+    const guiMaterial = gui.addFolder('Material');
+    guiMaterial.addColor(params, 'color').onChange((v: string) => {
+      if ('color' in material) {
+        (material as THREE.MeshPhysicalMaterial | THREE.MeshStandardMaterial | THREE.MeshBasicMaterial).color.set(v);
+      }
       updateBubbleStyles();
-
-      const guiMaterial = gui.addFolder('Material');
-      guiMaterial.addColor(params, 'color').onChange((v: string) => {
-        material.color.set(v);
-        updateBubbleStyles();
-      });
+    });
+    
+    // Only show emissive/clearcoat in HIGH tier to reduce GUI complexity on weak devices
+    if (deviceTier === 'HIGH') {
       guiMaterial.addColor(params, 'emissive').onChange((v: string) => {
-        material.emissive.set(v);
+        if ('emissive' in material) {
+          (material as THREE.MeshPhysicalMaterial | THREE.MeshStandardMaterial).emissive?.set(v);
+        }
         updateBubbleStyles();
       });
+    }
+    
+    if ('roughness' in material) {
       guiMaterial.add(params, 'roughness', 0, 1).onChange((v: number) => {
-        material.roughness = v;
+        (material as THREE.MeshPhysicalMaterial | THREE.MeshStandardMaterial).roughness = v;
         updateBubbleStyles();
       });
+    }
+    
+    if ('metalness' in material) {
       guiMaterial.add(params, 'metalness', 0, 1).onChange((v: number) => {
-        material.metalness = v;
+        (material as THREE.MeshPhysicalMaterial | THREE.MeshStandardMaterial).metalness = v;
         updateBubbleStyles();
       });
+    }
+    
+    if (deviceTier === 'HIGH' && 'clearcoat' in material) {
       guiMaterial.add(params, 'clearcoat', 0, 1).onChange((v: number) => {
-        material.clearcoat = v;
+        (material as THREE.MeshPhysicalMaterial).clearcoat = v;
         updateBubbleStyles();
       });
-      // guiMaterial.open();
+    }
+    // guiMaterial.open();
 
-      const group = new THREE.Group();
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const spheres: any[] = [];
+    const group = new THREE.Group();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const spheres: any[] = [];
 
-      positions.forEach((pos, i) => {
-        const radius = radii[i];
-        const geometry = new THREE.SphereGeometry(radius, 64, 64);
-        const sphere = new THREE.Mesh(geometry, material);
-        sphere.position.set(pos.x, pos.y, pos.z);
-        sphere.userData = {originalPosition: {...pos}, radius};
-        sphere.castShadow = true;
-        sphere.receiveShadow = true;
-        spheres.push(sphere);
-        group.add(sphere);
-      });
+    // Use quality preset for sphere segments
+    const geometrySegments = sphereSegments;
+
+    positions.forEach((pos, i) => {
+      const radius = radii[i];
+      const geometry = new THREE.SphereGeometry(radius, geometrySegments, geometrySegments);
+      const sphere = new THREE.Mesh(geometry, material);
+      sphere.position.set(pos.x, pos.y, pos.z);
+      sphere.userData = {originalPosition: {...pos}, radius};
+      sphere.castShadow = shadowsEnabled;
+      sphere.receiveShadow = shadowsEnabled;
+      spheres.push(sphere);
+      group.add(sphere);
+    });
 
       scene.add(group);
 
@@ -192,15 +266,15 @@ const params = {
       handleResize();
       window.addEventListener('resize', handleResize);
 
-      // Enhance soft shadows and warm light
-      const ambientLight = new THREE.AmbientLight(0xffffff, params.ambientLight);
+      // Enhance soft shadows and warm light (using preset values)
+      const ambientLight = new THREE.AmbientLight(0xffffff, ambientLightIntensity);
       scene.add(ambientLight);
 
-      const dirLight = new THREE.DirectionalLight(0xfff0f0, params.directionalLight); // Slight warm tint
+      const dirLight = new THREE.DirectionalLight(0xfff0f0, directionalLightIntensity); // Slight warm tint
       dirLight.position.set(10, 20, 15);
-      dirLight.castShadow = true;
-      dirLight.shadow.mapSize.width = 1024;
-      dirLight.shadow.mapSize.height = 1024;
+      dirLight.castShadow = shadowsEnabled;
+      dirLight.shadow.mapSize.width = shadowsEnabled ? 1024 : 512;
+      dirLight.shadow.mapSize.height = shadowsEnabled ? 1024 : 512;
       dirLight.shadow.bias = -0.0001;
       scene.add(dirLight);
 

@@ -86,6 +86,10 @@ export default function ProjectsSection() {
     const section = sectionRef.current!;
     const traveller = travellerRef.current!;
     const splitBalls = splitBallsRef.current.filter(Boolean) as HTMLDivElement[];
+    const cardsContainer = cardsContainerRef.current;
+
+    // ── Detect mobile view ─────────────────────────────────────────────
+    const isMobile = window.innerWidth < 768;
 
     // ── Responsive ball sizes ──────────────────────────────────────────
     const getResponsiveSizes = () => {
@@ -190,34 +194,54 @@ export default function ProjectsSection() {
             scale: 1 - (phase2Progress * 0.3),
           });
 
-          // Get card positions
-          const cards = Array.from(document.querySelectorAll('.project-card')) as HTMLElement[];
-          
-          splitBalls.forEach((ball, i) => {
-            const card = cards[i];
-            if (!card) return;
+          if (isMobile) {
+            // MOBILE: Single ball (no split) - stays at center
+            const mobileCardX = centerX - FINAL_SIZE / 2;
+            const mobileCardY = centerY - FINAL_SIZE / 2;
 
-            const ballAnchor = card.querySelector('.project-ball-anchor') as HTMLElement;
-            if (!ballAnchor) return;
-
-            const anchorRect = ballAnchor.getBoundingClientRect();
-            const targetX = anchorRect.left + anchorRect.width / 2 - FINAL_SIZE / 2;
-            const targetY = anchorRect.top + anchorRect.height / 2 - FINAL_SIZE / 2;
-
-            // Interpolate from center to card position
-            const x = gsap.utils.interpolate(centerX - FINAL_SIZE / 2, targetX, phase2Progress);
-            const y = gsap.utils.interpolate(centerY - FINAL_SIZE / 2, targetY, phase2Progress);
-
-            // Instantly hide when reaching destination (at 98% of phase)
-            const ballOpacity = phase2Progress < 0.98 ? 1 : 0;
-
-            gsap.set(ball, {
-              left: x,
-              top: y,
-              opacity: ballOpacity,
+            // Only animate the first split ball
+            gsap.set(splitBalls[0], {
+              left: mobileCardX,
+              top: mobileCardY,
+              opacity: phase2Progress < 0.98 ? 1 : 0,
               scale: 1,
             });
-          });
+
+            // Hide other split balls on mobile
+            for (let i = 1; i < splitBalls.length; i++) {
+              gsap.set(splitBalls[i], { opacity: 0, scale: 0 });
+            }
+          } else {
+            // DESKTOP/TABLET: Split into 4 balls
+            // Get card positions
+            const cards = Array.from(document.querySelectorAll('.project-card')) as HTMLElement[];
+            
+            splitBalls.forEach((ball, i) => {
+              const card = cards[i];
+              if (!card) return;
+
+              const ballAnchor = card.querySelector('.project-ball-anchor') as HTMLElement;
+              if (!ballAnchor) return;
+
+              const anchorRect = ballAnchor.getBoundingClientRect();
+              const targetX = anchorRect.left + anchorRect.width / 2 - FINAL_SIZE / 2;
+              const targetY = anchorRect.top + anchorRect.height / 2 - FINAL_SIZE / 2;
+
+              // Interpolate from center to card position
+              const x = gsap.utils.interpolate(centerX - FINAL_SIZE / 2, targetX, phase2Progress);
+              const y = gsap.utils.interpolate(centerY - FINAL_SIZE / 2, targetY, phase2Progress);
+
+              // Instantly hide when reaching destination (at 98% of phase)
+              const ballOpacity = phase2Progress < 0.98 ? 1 : 0;
+
+              gsap.set(ball, {
+                left: x,
+                top: y,
+                opacity: ballOpacity,
+                scale: 1,
+              });
+            });
+          }
 
           // Keep cards hidden
           gsap.set('.project-card', { opacity: 0 });
@@ -239,8 +263,10 @@ export default function ProjectsSection() {
             opacity: phase3Progress,
           });
 
-          // Cards appear instantly with stagger
+          // Cards appear
           const cards = Array.from(document.querySelectorAll('.project-card')) as HTMLElement[];
+          
+          // Show ALL cards on all screen sizes
           cards.forEach((card, i) => {
             const stagger = i * 0.05;
             const cardProgress = Math.max(0, Math.min(1, (phase3Progress - stagger) / (1 - stagger)));
@@ -272,6 +298,29 @@ export default function ProjectsSection() {
       },
     });
 
+    // ── Mobile: Auto-scroll cards horizontally (infinite loop) ─────────
+    if (isMobile && cardsContainer) {
+      // Create an infinite scrolling animation without delay
+      const scrollWidth = cardsContainer.scrollWidth - cardsContainer.clientWidth;
+      
+      // Infinite timeline that loops
+      const scrollTimeline = gsap.timeline({ repeat: -1 });
+      scrollTimeline.to(
+        cardsContainer,
+        {
+          scrollLeft: scrollWidth,
+          duration: 20,
+          ease: 'none',
+        },
+        0
+      );
+      
+      // When reaching the end, instantly reset to start
+      scrollTimeline.add(() => {
+        cardsContainer.scrollLeft = 0;
+      }, 20);
+    }
+
     // ── CRITICAL: NO scroll-based movement for project balls ──────────
     // The balls stay locked in their card positions
     // No parallax, no float, no movement after landing
@@ -279,6 +328,10 @@ export default function ProjectsSection() {
     // ── Cleanup ────────────────────────────────────────────────────────
     return () => {
       ScrollTrigger.getAll().forEach(t => t.kill());
+      // Kill auto-scroll animation on cleanup
+      if (cardsContainer) {
+        gsap.killTweensOf(cardsContainer);
+      }
     };
   }, []);
 

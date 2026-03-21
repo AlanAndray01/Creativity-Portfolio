@@ -1,0 +1,188 @@
+/**
+ * Quality Presets Configuration
+ * Defines rendering parameters for each device tier
+ * These are applied BEFORE the Three.js scene initializes
+ */
+
+import * as THREE from 'three';
+import { DeviceTier } from './performanceDetector';
+
+export interface QualityPreset {
+  // Rendering
+  pixelRatio: number;
+  antialias: boolean;
+  
+  // Shadows
+  shadowsEnabled: boolean;
+  shadowMapType: 'PCFShadowMap' | 'PCFSoftShadowMap' | 'VSMShadowMap';
+  
+  // Geometry
+  sphereSegments: number; // geometry segments for spheres
+  
+  // Materials
+  materialType: 'MeshBasicMaterial' | 'MeshStandardMaterial' | 'MeshPhysicalMaterial';
+  materialProps: {
+    roughness?: number;
+    metalness?: number;
+    clearcoat?: number;
+  };
+  
+  // Lighting
+  ambientLightIntensity: number;
+  directionalLightIntensity: number;
+  pointLightCount: number;
+  
+  // Post-processing
+  postProcessingEnabled: boolean;
+  bloomEnabled: boolean;
+  
+  // Animations
+  gsapAnimationsEnabled: boolean;
+  gsapScrubValue: number; // Lower = smoother but more intensive
+  particleEffectsEnabled: boolean;
+  
+  // Environment
+  roomEnvironmentQuality: number; // 0-1, lower = simpler
+  
+  // Mobile-specific
+  mobileOptimizations: boolean;
+  reduceDrawCalls: boolean;
+  
+  // Debug info
+  name: string;
+}
+
+/**
+ * LOW Quality Preset
+ * For old phones, weak laptops, very low-end devices
+ * Focus: Stability over visuals
+ */
+export const qualityPresets: Record<DeviceTier, QualityPreset> = {
+  LOW: {
+    pixelRatio: 1,
+    antialias: false,
+    shadowsEnabled: false,
+    shadowMapType: 'PCFShadowMap',
+    sphereSegments: 16, // Very low poly
+    materialType: 'MeshBasicMaterial',
+    materialProps: {
+      roughness: 0.5,
+      metalness: 0,
+    },
+    ambientLightIntensity: 0.8,
+    directionalLightIntensity: 0.6,
+    pointLightCount: 0,
+    postProcessingEnabled: false,
+    bloomEnabled: false,
+    gsapAnimationsEnabled: true, // Basic animations only
+    gsapScrubValue: 2.0, // Heavier scrub = less responsive but smoother
+    particleEffectsEnabled: false,
+    roomEnvironmentQuality: 0,
+    mobileOptimizations: true,
+    reduceDrawCalls: true,
+    name: 'LOW - Mobile/Weak Device',
+  },
+
+  MEDIUM: {
+    pixelRatio: 1.5,
+    antialias: true,
+    shadowsEnabled: true,
+    shadowMapType: 'PCFSoftShadowMap',
+    sphereSegments: 32, // Medium poly
+    materialType: 'MeshStandardMaterial',
+    materialProps: {
+      roughness: 0.7,
+      metalness: 0.34,
+    },
+    ambientLightIntensity: 0.64,
+    directionalLightIntensity: 0.9,
+    pointLightCount: 1,
+    postProcessingEnabled: false,
+    bloomEnabled: false,
+    gsapAnimationsEnabled: true,
+    gsapScrubValue: 1.2, // Moderate scrub
+    particleEffectsEnabled: false,
+    roomEnvironmentQuality: 0.04,
+    mobileOptimizations: true,
+    reduceDrawCalls: false,
+    name: 'MEDIUM - Balanced',
+  },
+
+  HIGH: {
+    pixelRatio: Math.min(window.devicePixelRatio || 1, 2),
+    antialias: true,
+    shadowsEnabled: true,
+    shadowMapType: 'PCFSoftShadowMap',
+    sphereSegments: 64, // High poly (default)
+    materialType: 'MeshPhysicalMaterial',
+    materialProps: {
+      roughness: 0.7,
+      metalness: 0.34,
+      clearcoat: 0.48,
+    },
+    ambientLightIntensity: 0.64,
+    directionalLightIntensity: 1.1,
+    pointLightCount: 2,
+    postProcessingEnabled: true,
+    bloomEnabled: true,
+    gsapAnimationsEnabled: true,
+    gsapScrubValue: 0.6, // Responsive scrub
+    particleEffectsEnabled: true,
+    roomEnvironmentQuality: 0.04,
+    mobileOptimizations: false,
+    reduceDrawCalls: false,
+    name: 'HIGH - Premium',
+  },
+};
+
+/**
+ * Get preset for detected tier
+ */
+export function getQualityPreset(tier: DeviceTier): QualityPreset {
+  return qualityPresets[tier];
+}
+
+/**
+ * Get preset name for UI display
+ */
+export function getPresetName(tier: DeviceTier): string {
+  return qualityPresets[tier].name;
+}
+
+/**
+ * Create THREE material based on preset
+ * This ensures materials are created according to device tier
+ */
+export function createMaterialForTier(
+  tier: DeviceTier,
+  color: string = '#91c8e4',
+  emissive: string = '#000000'
+): THREE.Material {
+  const preset = getQualityPreset(tier);
+
+  if (preset.materialType === 'MeshBasicMaterial') {
+    const material = new THREE.MeshBasicMaterial({
+      color,
+    });
+    return material;
+  } else if (preset.materialType === 'MeshStandardMaterial') {
+    const material = new THREE.MeshStandardMaterial({
+      color,
+      emissive,
+      roughness: preset.materialProps.roughness || 0.7,
+      metalness: preset.materialProps.metalness || 0.34,
+    });
+    return material;
+  } else {
+    // MeshPhysicalMaterial (HIGH tier)
+    const material = new THREE.MeshPhysicalMaterial({
+      color,
+      emissive,
+      roughness: preset.materialProps.roughness || 0.7,
+      metalness: preset.materialProps.metalness || 0.34,
+      clearcoat: preset.materialProps.clearcoat || 0.48,
+      clearcoatRoughness: 0.2,
+    });
+    return material;
+  }
+}
