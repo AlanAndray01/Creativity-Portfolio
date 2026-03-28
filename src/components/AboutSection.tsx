@@ -370,6 +370,7 @@ export default function AboutSection() {
                   src="/profile.webp"
                   alt="Profile photo"
                   draggable={false}
+                  loading="lazy"
                 />
               </div>
             </div>
@@ -379,8 +380,8 @@ export default function AboutSection() {
           <div className="about-text-col" ref={textColRef}>
 
             <div className="about-tag">
-              <h5>Full Stack Developer</h5>
-              <h6>Design &amp; Engineering</h6>
+              <div className="h5-style">Full Stack Developer</div>
+              <div className="h6-style">Design &amp; Engineering</div>
               <div className="about-tag-line" />
             </div>
 

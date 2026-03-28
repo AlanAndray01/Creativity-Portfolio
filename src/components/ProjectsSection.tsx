@@ -357,8 +357,8 @@ export default function ProjectsSection() {
           {/* Header */}
           <div className="projects-header">
             <div className="projects-tag">
-              <h5>Selected Work</h5>
-              <h6>Featured Projects</h6>
+              <div className="h5-style">Selected Work</div>
+              <div className="h6-style">Featured Projects</div>
               <div className="projects-tag-line" />
             </div>
             <h2 className="projects-title">Recent Projects</h2>
@@ -386,6 +386,7 @@ export default function ProjectsSection() {
                       src={project.image}
                       alt={project.title}
                       draggable={false}
+                      loading="lazy"
                     />
                   </div>
                 </div>

@@ -89,7 +89,7 @@
   opacity: 0; /* Hidden initially, revealed by animation */
 }
 
-.projects-tag h5 {
+.projects-tag h5, .h5-style {
   font-family: "Oswald", sans-serif;
   font-size: 16px;
   font-weight: 600;
@@ -99,7 +99,7 @@
   text-transform: uppercase;
 }
 
-.projects-tag h6 {
+.projects-tag h6, .h6-style {
   font-family: "Oswald", sans-serif;
   font-size: 14px;
   font-weight: 400;

@@ -124,10 +124,15 @@ gui.close(); // Double ensure it's closed by default
       const root = document.documentElement;
       root.style.setProperty('--bubble-primary-color', params.color);
       root.style.setProperty('--bubble-emissive-color', params.emissive);
-      root.style.setProperty('--bubble-shadow-rgb', hexToRgb(params.color));
+      const rgb = hexToRgb(params.color);
+      root.style.setProperty('--bubble-shadow-rgb', rgb);
       root.style.setProperty('--bubble-roughness', String(params.roughness));
       root.style.setProperty('--bubble-metalness', String(params.metalness));
       root.style.setProperty('--bubble-clearcoat', String(params.clearcoat));
+
+      // Synchronize Contact section
+      root.style.setProperty('--contact-primary-color', params.color);
+      root.style.setProperty('--contact-shadow-rgb', rgb);
     };
 
 const params = {
@@ -450,11 +455,11 @@ const params = {
 
   return (
     <>
+      <div className="mouse-effect">
+        <div className="circle"></div>
+        <div className="circle-follow"></div>
+      </div>
       <div className="hero-section-container">
-        <div className="mouse-effect">
-          <div className="circle"></div>
-          <div className="circle-follow"></div>
-        </div>
 
         <header className="hide-text">
           <div className="header-inner">
@@ -468,7 +473,7 @@ const params = {
                 <li><a href="#">simulations</a></li>
               </ul>
             </nav>
-            <button className="ham-btn">
+            <button className="ham-btn" aria-label="Toggle Navigation Menu">
               <i className="fa-solid fa-bars"></i>
             </button>
           </div>
@@ -479,30 +484,30 @@ const params = {
         <section className="banner hide-text">
           <div className="banner-inner">
             <div className="top-desc">
-              <h5>Despersion Collisions</h5>
-              <h6>Research & Development</h6>
+              <div className="h5">Despersion Collisions</div>
+              <div className="h6">Research & Development</div>
               <span></span>
             </div>
             <div className="bottom-desc">
               <div className="left-desc">
-                <h1>X</h1>
+                <div className="h1">X</div>
                 <div className="desc-inner">
-                  <h5>Pink & Rose Gold</h5>
-                  <h6>Lighting & Material Study</h6>
+                  <div className="h5">Pink & Rose Gold</div>
+                  <div className="h6">Lighting & Material Study</div>
                 </div>
               </div>
               <div className="middle-desc">
                 <h2>Dynamic Collisions</h2>
               </div>
               <div className="right-desc">
-                <h1>01</h1>
+                <div className="h1">01</div>
                 <div className="desc-inner">
                   <span>Social Links</span>
                   <ul>
-                    <li><a href="#"><i className="fa-brands fa-x-twitter"></i></a></li>
-                    <li><a href="#"><i className="fa-brands fa-facebook-f"></i></a></li>
-                    <li><a href="#"><i className="fa-brands fa-instagram"></i></a></li>
-                    <li><a href="#"><i className="fa-brands fa-youtube"></i></a></li>
+                    <li><a href="#" aria-label="Twitter"><i className="fa-brands fa-x-twitter"></i></a></li>
+                    <li><a href="#" aria-label="Facebook"><i className="fa-brands fa-facebook-f"></i></a></li>
+                    <li><a href="#" aria-label="Instagram"><i className="fa-brands fa-instagram"></i></a></li>
+                    <li><a href="#" aria-label="YouTube"><i className="fa-brands fa-youtube"></i></a></li>
                   </ul>
                 </div>
               </div>

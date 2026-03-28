@@ -18,6 +18,15 @@ export interface QualityPreset {
   
   // Geometry
   sphereSegments: number; // geometry segments for spheres
+  bubbleCount: number; // Number of bubbles
+  
+  // Typography
+  textCurveSegments: number;
+  textBevelSegments: number;
+
+  // Interactivity
+  mouseMultiplier: number;
+  textRotationMultiplier: number;
   
   // Materials
   materialType: 'MeshBasicMaterial' | 'MeshStandardMaterial' | 'MeshPhysicalMaterial';
@@ -64,6 +73,7 @@ export const qualityPresets: Record<DeviceTier, QualityPreset> = {
     shadowsEnabled: false,
     shadowMapType: 'PCFShadowMap',
     sphereSegments: 16, // Very low poly
+    bubbleCount: 100, // Fewer bubbles
     materialType: 'MeshBasicMaterial',
     materialProps: {
       roughness: 0.5,
@@ -77,6 +87,10 @@ export const qualityPresets: Record<DeviceTier, QualityPreset> = {
     gsapAnimationsEnabled: true, // Basic animations only
     gsapScrubValue: 2.0, // Heavier scrub = less responsive but smoother
     particleEffectsEnabled: false,
+    textCurveSegments: 4,
+    textBevelSegments: 1,
+    mouseMultiplier: 2,
+    textRotationMultiplier: 0.5,
     roomEnvironmentQuality: 0,
     mobileOptimizations: true,
     reduceDrawCalls: true,
@@ -89,6 +103,7 @@ export const qualityPresets: Record<DeviceTier, QualityPreset> = {
     shadowsEnabled: true,
     shadowMapType: 'PCFSoftShadowMap',
     sphereSegments: 32, // Medium poly
+    bubbleCount: 200,
     materialType: 'MeshStandardMaterial',
     materialProps: {
       roughness: 0.7,
@@ -102,6 +117,10 @@ export const qualityPresets: Record<DeviceTier, QualityPreset> = {
     gsapAnimationsEnabled: true,
     gsapScrubValue: 1.2, // Moderate scrub
     particleEffectsEnabled: false,
+    textCurveSegments: 8,
+    textBevelSegments: 3,
+    mouseMultiplier: 4,
+    textRotationMultiplier: 0.35,
     roomEnvironmentQuality: 0.04,
     mobileOptimizations: true,
     reduceDrawCalls: false,
@@ -114,6 +133,7 @@ export const qualityPresets: Record<DeviceTier, QualityPreset> = {
     shadowsEnabled: true,
     shadowMapType: 'PCFSoftShadowMap',
     sphereSegments: 64, // High poly (default)
+    bubbleCount: 350,
     materialType: 'MeshPhysicalMaterial',
     materialProps: {
       roughness: 0.7,
@@ -128,6 +148,10 @@ export const qualityPresets: Record<DeviceTier, QualityPreset> = {
     gsapAnimationsEnabled: true,
     gsapScrubValue: 0.6, // Responsive scrub
     particleEffectsEnabled: true,
+    textCurveSegments: 12,
+    textBevelSegments: 8,
+    mouseMultiplier: 5,
+    textRotationMultiplier: 0.25,
     roomEnvironmentQuality: 0.04,
     mobileOptimizations: false,
     reduceDrawCalls: false,

@@ -8,6 +8,11 @@ export default function Footer() {
     <footer className="footer-section">
       <div className="footer-container">
         
+        <div className="footer-col brand-col">
+          <a href="#" className="navbar-brand footer-brand">Creativity</a>
+          <p className="brand-desc">Research &amp; Development in 3D Collisions and WebGL Experiences.</p>
+        </div>
+
         <div className="footer-col">
           <h3>Contact</h3>
           <ul className="footer-link-list">

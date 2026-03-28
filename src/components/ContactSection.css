@@ -1,6 +1,6 @@
 .contact-section {
   width: 100%;
-  min-height: 100vh;
+  min-height: 90vh;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -24,7 +24,7 @@
 /* LEFT SIDE - Sidebar Style (Visuals) */
 .contact-sidebar {
   flex: 0.35; /* Slightly narrower sidebar */
-  background: linear-gradient(135deg, #91c8e4 0%, #b2dffb 100%); /* Hero Blue Gradient */
+  background: linear-gradient(135deg, var(--contact-primary-color, #91c8e4) 0%, #b2dffb 100%); /* Hero Blue Gradient */
   padding: 2.5rem 2rem;
   display: flex;
   flex-direction: column;
@@ -158,14 +158,12 @@
   transition: all 0.3s ease;
 }
 
-.input-field:focus {
-  outline: none;
-  border-color: #91c8e4;
-  background-color: #fff;
-  box-shadow: 0 0 0 3px rgba(145, 200, 228, 0.1);
-}
-
-textarea.input-field {
+  .input-field:focus {
+    outline: none;
+    border-color: var(--contact-primary-color, #91c8e4);
+    background-color: #fff;
+    box-shadow: 0 0 0 3px rgba(var(--contact-shadow-rgb, 145, 200, 228), 0.1);
+  }textarea.input-field {
   resize: vertical;
   min-height: 80px;
 }
@@ -180,7 +178,7 @@ textarea.input-field {
 .checkbox-group input[type="checkbox"] {
   width: 16px;
   height: 16px;
-  accent-color: #91c8e4;
+  accent-color: var(--contact-primary-color, #91c8e4);
   cursor: pointer;
 }
 
@@ -191,28 +189,25 @@ textarea.input-field {
   cursor: pointer;
 }
 
-.submit-btn {
-  margin-top: 1rem;
-  padding: 0.9rem;
-  background-color: #91c8e4; /* Hero Blue */
-  color: #101117;
-  font-size: 1rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 6px 15px rgba(145, 200, 228, 0.25);
-}
-
-.submit-btn:hover {
-  background-color: #7ab8d6;
-  transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(145, 200, 228, 0.35);
-}
-
-/* Responsive */
+  .submit-btn {
+    margin-top: 1rem;
+    padding: 0.9rem;
+    background-color: var(--contact-primary-color, #91c8e4);
+    color: #101117;
+    font-size: 1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 6px 15px rgba(var(--contact-shadow-rgb, 145, 200, 228), 0.25);
+  }  .submit-btn:hover {
+    background-color: var(--contact-primary-color, #7ab8d6);
+    filter: brightness(0.9);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(var(--contact-shadow-rgb, 145, 200, 228), 0.35);
+  }/* Responsive */
 @media (max-width: 900px) {
   .contact-section {
     padding: 1rem;
