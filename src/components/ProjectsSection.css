@@ -142,7 +142,6 @@
     grid-template-columns: unset;
     overflow-x: auto;
     overflow-y: hidden;
-    scroll-snap-type: x mandatory;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none; /* Firefox */
     gap: 24px;
@@ -189,7 +188,6 @@
 @media (max-width: 900px) {
   .project-card {
     flex: 0 0 auto;
-    scroll-snap-align: center;
     min-width: 280px;
   }
 }

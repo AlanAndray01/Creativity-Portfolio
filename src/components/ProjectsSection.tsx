@@ -298,37 +298,19 @@ export default function ProjectsSection() {
       },
     });
 
-    // ── Mobile: Auto-scroll cards horizontally (infinite loop) ─────────
+    // ── Mobile: Auto-scroll cards horizontally ─────────   
     if (isMobile && cardsContainer) {
-      // Create an infinite scrolling animation without delay
-      const scrollWidth = cardsContainer.scrollWidth - cardsContainer.clientWidth;
-      
-      // Infinite timeline that loops
-      const scrollTimeline = gsap.timeline({ repeat: -1 });
-      scrollTimeline.to(
-        cardsContainer,
-        {
-          scrollLeft: scrollWidth,
-          duration: 20,
-          ease: 'none',
-        },
-        0
-      );
-      
-      // When reaching the end, instantly reset to start
-      scrollTimeline.add(() => {
-        cardsContainer.scrollLeft = 0;
-      }, 20);
+      // Native CSS scrolling handles this smoothly without JS overhead or stuttering
+      // Cards container uses `overflow-x: auto` and `-webkit-overflow-scrolling: touch` 
     }
 
-    // ── CRITICAL: NO scroll-based movement for project balls ──────────
+    // ── CRITICAL: NO scroll-based movement for project balls ──────────  
     // The balls stay locked in their card positions
     // No parallax, no float, no movement after landing
 
-    // ── Cleanup ────────────────────────────────────────────────────────
+    // ── Cleanup ────────────────────────────────────────────────────────        
     return () => {
       ScrollTrigger.getAll().forEach(t => t.kill());
-      // Kill auto-scroll animation on cleanup
       if (cardsContainer) {
         gsap.killTweensOf(cardsContainer);
       }

@@ -44,7 +44,7 @@ export default function Model3D() {
         console.warn('[3DModel] Device config not available, using defaults:', error);
     }
 
-    workerApi.init(transfer(offscreen, [offscreen]), window.innerWidth, window.innerHeight, window.devicePixelRatio || 1, preset);
+    workerApi.init(transfer(offscreen, [offscreen]), container.clientWidth, container.clientHeight, window.devicePixelRatio || 1, preset);
 
     const onMouseMove = (e: MouseEvent) => {
         const mouseMultiplier = preset?.mouseMultiplier ?? 5;
@@ -54,7 +54,8 @@ export default function Model3D() {
     };
 
     const onResize = () => {
-        workerApi.onResize(window.innerWidth, window.innerHeight);
+        if (!container) return;
+        workerApi.onResize(container.clientWidth, container.clientHeight);
     };
 
     window.addEventListener('mousemove', onMouseMove);

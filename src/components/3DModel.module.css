@@ -9,6 +9,12 @@
   z-index: 10;
 }
 
+@media (max-width: 767px) {
+  .modal3D {
+    height: 50vh;
+  }
+}
+
 .modal3D canvas {
   position: absolute !important;
   top: 0 !important;

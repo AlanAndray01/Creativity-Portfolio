@@ -22,12 +22,24 @@ const api = {
 
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera(75, width / height, nearDist, farDist);
-    camera.position.z = 500;
 
-    const finalPixelRatio = preset?.pixelRatio ?? Math.min(pixelRatio, 2);
+    const getResponsiveZ = (w: number) => {
+      // Zoomed in closer for much better mobile readability while preserving margin
+      if (w < 480) return 520; // Doubled zoom per request 
+      if (w < 768) return 460;
+      return 450; // Desktop default, closer and sharper
+    };
+    camera.position.z = getResponsiveZ(width);
+
+    const finalPixelRatio = preset?.pixelRatio ?? Math.min(pixelRatio, window?.devicePixelRatio || 2);
     const antialias = preset?.antialias ?? true;
 
-    renderer = new THREE.WebGLRenderer({ canvas, antialias });
+    renderer = new THREE.WebGLRenderer({ 
+      canvas, 
+      antialias, 
+      powerPreference: "high-performance",
+      alpha: false 
+    });
     renderer.setClearColor("#4DD0E1");
     renderer.setPixelRatio(finalPixelRatio);
     renderer.setSize(width, height, false);
@@ -42,12 +54,16 @@ const api = {
     scene.add(dirLight);
 
     // Bubbles
-    const bubbleSize = 60;
-    const sphereSegments = (preset?.sphereSegments ?? 32) * 1.5;
-    const geometry = new THREE.SphereGeometry(bubbleSize, sphereSegments, sphereSegments);
+    const isMobile = width < 480;
+    const isTablet = width >= 480 && width < 768;
+    const bubbleSize = isMobile ? 35 : isTablet ? 45 : 60;
+    
+    // Dynamic Level of Detail based on Preset and Viewport
+    const sphereGeoSegments = Math.max(8, Math.floor((preset?.sphereSegments ?? 32) * (isMobile ? 0.5 : 1)));
+    const geometry = new THREE.SphereGeometry(bubbleSize, sphereGeoSegments, sphereGeoSegments);   
     const material = new THREE.MeshNormalMaterial();
     group = new THREE.Group();
-    const bubbleCount = preset?.bubbleCount ?? 350;
+    const bubbleCount = isMobile ? Math.min(100, preset?.bubbleCount ?? 150) : (preset?.bubbleCount ?? 350);
     for (let i = 0; i < bubbleCount; i++) {
       const mesh = new THREE.Mesh(geometry, material);
       const dist = farDist / 3;
@@ -71,21 +87,27 @@ const api = {
     // Typography
     const loader = new FontLoader();
     textMesh = new THREE.Mesh();
-    loader.load('https://threejs.org/examples/fonts/helvetiker_regular.typeface.json', (font) => {
-      const cubeSize = 120;
+    // Use fast cdn url instead of official domain rate-limiting or slow speeds
+    loader.load('https://cdn.jsdelivr.net/npm/three@0.149.0/examples/fonts/helvetiker_regular.typeface.json', (font) => { 
+      const isMobile = width < 480;
+      const isTablet = width >= 480 && width < 768;
+      // Drastically increased scale for high-impact mobile legibility (~double the delta of previous adjustment)
+      const cubeSize = isMobile ? 85 : isTablet ? 100 : 110;
+      
+      const bevelSegments = preset?.textBevelSegments ?? 8;
+      const curveSegments = preset?.textCurveSegments ?? 12;
+      
       const typoProperties = {
         font: font,
         size: cubeSize,
-        height: cubeSize / 2,
-        curveSegments: preset?.textCurveSegments ?? 12,
-        bevelEnabled: true,
-        bevelThickness: 10,
-        bevelSize: 6,
+        height: isMobile ? cubeSize / 4 : cubeSize / 2,
+        curveSegments: curveSegments,
+        bevelEnabled: bevelSegments > 1,
+        bevelThickness: isMobile ? 3 : 10,
+        bevelSize: isMobile ? 2 : 6,
         bevelOffset: 1,
-        bevelSegments: preset?.textBevelSegments ?? 8,
-      };
-
-      const text1 = new TextGeometry("We build", typoProperties);
+        bevelSegments: bevelSegments,
+      };      const text1 = new TextGeometry("We build", typoProperties);
       text1.computeBoundingBox();
       const mesh1 = new THREE.Mesh(text1, material);
       if (text1.boundingBox) {
@@ -138,6 +160,14 @@ const api = {
   onResize: (width: number, height: number) => {
     if (camera && renderer) {
       camera.aspect = width / height;
+
+      const getResponsiveZ = (w: number) => {
+        if (w < 480) return 520;
+        if (w < 768) return 460;
+        return 450;
+      };
+      camera.position.z = getResponsiveZ(width);
+
       camera.updateProjectionMatrix();
       renderer.setSize(width, height, false);
     }
