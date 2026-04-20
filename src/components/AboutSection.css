@@ -206,7 +206,7 @@
 
 /* Descriptor tag — hero style */
 .about-tag h5, .h5-style {
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: 'Ubuntu', sans-serif;
   font-size: 12px;
   font-weight: 400;
   letter-spacing: 0.03em;
@@ -215,7 +215,7 @@
 }
 
 .about-tag h6, .h6-style {
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: 'Ubuntu', sans-serif;
   font-size: 11px;
   font-weight: 300;
   color: #888;
@@ -231,7 +231,7 @@
 
 /* Big name — hero "DYNAMIC COLLISIONS" weight */
 .about-name {
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: 'Ubuntu', sans-serif;
   font-size: clamp(3rem, 5.2vw, 5.6rem);
   font-weight: 900;
   line-height: 0.92;
@@ -256,7 +256,7 @@
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: 'Ubuntu', sans-serif;
   font-size: 11px;
   font-weight: 400;
   letter-spacing: 0.2em;
@@ -277,7 +277,7 @@
 
 /* Description */
 .about-description {
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: 'Ubuntu', sans-serif;
   font-size: 14.5px;
   font-weight: 300;
   line-height: 1.9;
@@ -288,7 +288,7 @@
 
 /* Skills label */
 .about-skills-label {
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: 'Ubuntu', sans-serif;
   font-size: 10px;
   font-weight: 500;
   letter-spacing: 0.3em;
@@ -307,7 +307,7 @@
   padding: 7px 15px;
   border: 1px solid var(--bubble-primary-color);
   border-radius: 2px;
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: 'Ubuntu', sans-serif;
   font-size: 11px;
   font-weight: 400;
   letter-spacing: 0.1em;
@@ -337,7 +337,7 @@
 
 .about-stat-number {
   display: block;
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: 'Ubuntu', sans-serif;
   font-size: 2.2rem;
   font-weight: 900;
   color: #0d0d0d;
@@ -346,7 +346,7 @@
 
 .about-stat-label {
   display: block;
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: 'Ubuntu', sans-serif;
   font-size: 10px;
   font-weight: 400;
   letter-spacing: 0.2em;
@@ -361,7 +361,7 @@
   right: 20px;
   top: 50%;
   transform: translateY(-50%) rotate(90deg);
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: 'Ubuntu', sans-serif;
   font-size: 9px;
   font-weight: 400;
   letter-spacing: 0.28em;
@@ -377,7 +377,7 @@
   position: absolute;
   bottom: 24px;
   right: 56px;
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: 'Ubuntu', sans-serif;
   font-size: clamp(3.5rem, 8vw, 9rem);
   font-weight: 900;
   color: rgba(0,0,0,0.055);

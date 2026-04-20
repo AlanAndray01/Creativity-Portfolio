@@ -459,15 +459,16 @@ gui.close(); // Double ensure it's closed by default
         <div className="circle"></div>
         <div className="circle-follow"></div>
       </div>
-      <div className="hero-section-container" ref={containerRef}>
+      <div className="hero-section-container" ref={containerRef} id="home">
 
         <header className="hide-text">
           <div className="header-inner">
-            <a href="#" className="navbar-brand">Creativity</a>
+            <a href="#" className="navbar-brand">Fluxion</a>
             <nav className="desktop-nav">
               <ul>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#projects-bottom">Projects</a></li>
                 <li><a href="#about">Profile</a></li>
-                <li><a href="#projects">Projects</a></li>
                 <li><a href="#3dmodal">3D Modal</a></li>
                 <li><a href="#contact">Contact Me</a></li>
                 <li>
@@ -497,16 +498,22 @@ gui.close(); // Double ensure it's closed by default
 
         {/* Mobile Menu Overlay */}
         <div className={`mobile-menu-overlay ${isMenuOpen ? 'open' : ''}`}>
-          <div className="close-btn" onClick={() => setIsMenuOpen(false)}>
-            &times;
+          <div className="mobile-menu-header">
+            <span className="navbar-brand" style={{ fontSize: '22px' }}>Fluxion</span>
+            <div className="close-btn" onClick={() => setIsMenuOpen(false)}>
+              &times;
+            </div>
           </div>
+          <div className="mobile-menu-divider"></div>
+          
           <nav className="mobile-nav">
             <ul>
+              <li><a href="#home" onClick={() => setIsMenuOpen(false)}>Home</a></li>
+              <li><a href="#projects-bottom" onClick={() => setIsMenuOpen(false)}>Projects</a></li>
               <li><a href="#about" onClick={() => setIsMenuOpen(false)}>Profile</a></li>
-              <li><a href="#projects" onClick={() => setIsMenuOpen(false)}>Projects</a></li>
               <li><a href="#3dmodal" onClick={() => setIsMenuOpen(false)}>3D Modal</a></li>
               <li><a href="#contact" onClick={() => setIsMenuOpen(false)}>Contact Me</a></li>
-              <li>
+              <li className="cv-btn-container">
                 <a 
                   href="/Syed Arslan Shah CV.pdf" 
                   className="cv-btn" 
@@ -522,7 +529,7 @@ gui.close(); // Double ensure it's closed by default
           </nav>
         </div>
 
-        <h1 className="main-txt">Creativity</h1>
+        <h1 className="main-txt">Fluxion</h1>
 
         <section className="banner hide-text">
           <div className="banner-inner">
@@ -533,7 +540,6 @@ gui.close(); // Double ensure it's closed by default
             </div>
             <div className="bottom-desc">
               <div className="left-desc">
-                <div className="h1">X</div>
                 <div className="desc-inner">
                   <div className="h5">Pink & Rose Gold</div>
                   <div className="h6">Lighting & Material Study</div>

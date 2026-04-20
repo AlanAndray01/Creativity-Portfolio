@@ -75,6 +75,7 @@ export default function Model3D() {
   return (
     <div 
       ref={containerRef} 
+      id="3dmodal"
       className={styles.modal3D} 
       aria-label="Interactive 3D floating animation"
       role="img"

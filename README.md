@@ -1,4 +1,4 @@
-# Creativity - 3D Dynamic Collisions Portfolio
+# Fluxion - 3D Dynamic Collisions Portfolio
 
 A stunning Next.js portfolio featuring interactive 3D sphere collisions with advanced animations and dynamic lighting effects.
 

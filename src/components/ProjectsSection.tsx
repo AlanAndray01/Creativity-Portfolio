@@ -334,6 +334,9 @@ export default function ProjectsSection() {
 
       {/* ── PROJECTS SECTION ── */}
       <section className="projects-section" ref={sectionRef} id="projects">
+        {/* Anchor strictly aligning bottom to viewport without script offset padding */}
+        <div id="projects-bottom" style={{ position: 'absolute', bottom: 0, left: 0, height: '100vh', width: '1px', pointerEvents: 'none', visibility: 'hidden' }} />
+        
         <div className="projects-inner">
           
           {/* Header */}
@@ -392,7 +395,7 @@ export default function ProjectsSection() {
         </div>
 
         {/* Side text */}
-        <span className="projects-side-text" aria-hidden="true">
+        <span className="projects-side-text" aria-hidden="true" id="projects-target">
           Explore work
         </span>
 

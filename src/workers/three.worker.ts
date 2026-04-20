@@ -107,23 +107,29 @@ const api = {
         bevelSize: isMobile ? 2 : 6,
         bevelOffset: 1,
         bevelSegments: bevelSegments,
-      };      const text1 = new TextGeometry("We build", typoProperties);
+      };
+
+      const text1 = new TextGeometry("Fluxion Crafts", typoProperties);
       text1.computeBoundingBox();
       const mesh1 = new THREE.Mesh(text1, material);
       if (text1.boundingBox) {
         mesh1.position.x = -0.5 * (text1.boundingBox.max.x - text1.boundingBox.min.x);
       }
-      mesh1.position.y = cubeSize * 0.6;
+      mesh1.position.y = cubeSize * 0.75;
 
-      const text2 = new TextGeometry("Creativity.", typoProperties);
+      const text2 = new TextGeometry("Elegance", typoProperties);
       text2.computeBoundingBox();
       const mesh2 = new THREE.Mesh(text2, material);
       if (text2.boundingBox) {
         mesh2.position.x = -0.5 * (text2.boundingBox.max.x - text2.boundingBox.min.x);
       }
-      mesh2.position.y = -cubeSize * 0.6;
+      mesh2.position.y = -cubeSize * 0.75;
 
       textMesh.add(mesh1, mesh2);
+      
+      textMesh.updateMatrixWorld(true);
+      const bbox = new THREE.Box3().setFromObject(textMesh);
+      textMesh.position.y = -0.5 * (bbox.max.y + bbox.min.y);
       textMesh.position.z = -cubeSize;
       scene.add(textMesh);
     });
